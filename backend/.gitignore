@@ -1,7 +1,5 @@
 # =========================
-
 # Spring Boot / Maven
-
 # =========================
 
 HELP.md
@@ -12,9 +10,7 @@ target/
 !**/src/test/**/target/
 
 # =========================
-
 # STS (Spring Tool Suite)
-
 # =========================
 
 .apt_generated
@@ -26,9 +22,7 @@ target/
 .sts4-cache
 
 # =========================
-
 # IntelliJ IDEA
-
 # =========================
 
 .idea
@@ -37,9 +31,7 @@ target/
 *.ipr
 
 # =========================
-
 # NetBeans
-
 # =========================
 
 /nbproject/private/
@@ -53,9 +45,22 @@ build/
 !**/src/test/**/build/
 
 # =========================
-
 # VS Code
-
 # =========================
 
 .vscode/
+
+# =========================
+# Security & Secrets
+# =========================
+
+application-local.properties
+.env
+*.env
+
+# =========================
+# OS Files
+# =========================
+
+.DS_Store
+Thumbs.db
