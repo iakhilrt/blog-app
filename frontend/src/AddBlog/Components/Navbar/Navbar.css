@@ -1,0 +1,101 @@
+/* Navbar base */
+.navbar {
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  padding: 12px 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* Brand */
+.navbar-brand {
+  font-weight: 800;
+  font-size: 20px;
+  color: #fff !important;
+  letter-spacing: 0.5px;
+}
+
+/* Nav links */
+.navbar-nav .nav-link {
+  color: rgba(255,255,255,0.9) !important;
+  font-weight: 600;
+  margin-right: 12px;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+/* Hover underline animation */
+.navbar-nav .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background: #ffffff;
+  transition: width 0.25s ease;
+}
+
+.navbar-nav .nav-link:hover::after {
+  width: 100%;
+}
+
+/* Hover color */
+.navbar-nav .nav-link:hover {
+  color: #ffffff !important;
+}
+
+/* Primary button (Signup) */
+.navbar .btn-primary {
+  background: #ffffff;
+  color: #4a3aff;
+  border-radius: 25px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.navbar .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
+/* Logout button */
+.navbar .btn-danger {
+  border-radius: 25px;
+  padding: 6px 16px;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.navbar .btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
+/* Navbar toggler */
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+/* Mobile dropdown */
+@media (max-width: 991px) {
+  .navbar-nav {
+    background: rgba(0,0,0,0.85);
+    padding: 15px;
+    border-radius: 12px;
+  }
+
+  .navbar-nav .nav-link {
+    margin: 8px 0;
+  }
+
+  .navbar .btn-primary,
+  .navbar .btn-danger {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
