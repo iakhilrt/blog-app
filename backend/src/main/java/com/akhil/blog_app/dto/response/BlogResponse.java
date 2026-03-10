@@ -13,5 +13,6 @@ public class BlogResponse {
     private String description;
     private String image;
     private LocalDateTime createdAt;
-    private String authorName; // from User, not the full User object
+    private String authorName;
+    private String authorEmail;
 }

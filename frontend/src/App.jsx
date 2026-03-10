@@ -21,6 +21,7 @@ import AdminRoute from "./admin/AdminRoute";
 
 // Protected Route
 import ProtectedRoute from "./components/ProtectedRoute";
+import EditBlog from "./pages/EditBlog/EditBlog";
 
 // Layout wrapper
 function MainLayout({ children }) {
@@ -64,6 +65,12 @@ function App() {
         } />
         <Route path="/blog/:id" element={
           <MainLayout><ViewBlogDetails /></MainLayout>
+        } />
+
+        <Route path="/edit-blog/:id" element={
+          <ProtectedRoute>
+            <MainLayout><EditBlog /></MainLayout>
+          </ProtectedRoute>
         } />
 
         {/* 🔒 Protected — login required */}

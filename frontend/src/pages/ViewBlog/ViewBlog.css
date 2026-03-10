@@ -169,6 +169,13 @@
   color: #94a3b8;
 }
 
+/* Actions wrapper */
+.blog-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .blog-read-btn {
   background: linear-gradient(135deg, #6a5af9, #4da8ff);
   color: #fff;
@@ -184,6 +191,27 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(106,90,249,0.35);
   color: #fff;
+}
+
+/* ✅ Edit button — matches design */
+.blog-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: #fff;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.blog-edit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(249,115,22,0.4);
 }
 
 /* Responsive */
@@ -206,5 +234,10 @@
 
   .search-bar {
     padding: 8px 16px;
+  }
+
+  .blog-card-actions {
+    width: 100%;
+    justify-content: flex-end;
   }
 }

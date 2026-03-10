@@ -37,6 +37,15 @@ public class BlogController {
         return ResponseEntity.ok(blogService.addBlog(request, email));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<BlogResponse> updateBlog(
+            @PathVariable Long id,
+            @RequestBody BlogRequest request,
+            @AuthenticationPrincipal String email) {
+
+        return ResponseEntity.ok(blogService.updateBlog(id, request, email));
+    }
+
     // GET /api/blogs/my — get logged in user's blogs
     @GetMapping("/my")
     public ResponseEntity<List<BlogResponse>> getMyBlogs(

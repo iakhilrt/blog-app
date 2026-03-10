@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import "./ViewBlog.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 
 function ViewBlog() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+
+  // ✅ Get logged in user's email
+  const loggedInEmail = localStorage.getItem("email");
 
   useEffect(() => {
     api.get("/api/blogs")
@@ -75,9 +79,20 @@ function ViewBlog() {
                       year: "numeric", month: "short", day: "numeric"
                     })}
                   </small>
-                  <Link to={`/blog/${blog.id}`} className="blog-read-btn">
-                    Read More →
-                  </Link>
+                  <div className="blog-card-actions">
+                    <Link to={`/blog/${blog.id}`} className="blog-read-btn">
+                      Read More →
+                    </Link>
+                    {/* ✅ Show Edit only to the author */}
+                    {blog.authorEmail === loggedInEmail && (
+                      <button
+                        className="blog-edit-btn"
+                        onClick={() => navigate(`/edit-blog/${blog.id}`)}
+                      >
+                        ✏️ Edit
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
