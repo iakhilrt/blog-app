@@ -28,8 +28,13 @@ public class AuthController {
     @PostMapping("/send-otp")
     public ResponseEntity<String> sendOtp(@RequestBody Map<String, String> body) {
         String email = body.get("email");
-        otpService.sendOtp(email);
-        return ResponseEntity.ok("OTP sent to " + email);
+        try {
+            otpService.sendOtp(email);
+            return ResponseEntity.ok("OTP sent to " + email);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Failed: " + e.getMessage());
+        }
     }
 
     //Verify OTP + Signup
