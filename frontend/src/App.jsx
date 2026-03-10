@@ -39,8 +39,9 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* Redirect root to home */}
-        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/" element={
+          <MainLayout><LandingPage /></MainLayout>
+        } />
 
         {/* Public pages */}
         <Route path="/home" element={
