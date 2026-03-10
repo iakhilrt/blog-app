@@ -5,6 +5,7 @@ import "./Navbar.css";
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,8 +19,12 @@ function Navbar() {
     checkLogin();
     window.addEventListener("login-status-changed", checkLogin);
 
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+
     return () => {
       window.removeEventListener("login-status-changed", checkLogin);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -34,64 +39,67 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark">
-      <div className="container-fluid">
+    <nav className={`inkwell-nav${scrolled ? " scrolled" : ""}`}>
+      <div className="nav-container">
 
-        <Link className="navbar-brand" to="/home">YourBlog.com</Link>
+        {/* Brand */}
+        <Link className="nav-brand" to="/home">
+          <span className="brand-icon">✦</span>
+          <span className="brand-text">Inkwell</span>
+        </Link>
 
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
+        {/* Hamburger */}
+        <input type="checkbox" id="nav-toggle" className="nav-toggle-input" />
+        <label htmlFor="nav-toggle" className="nav-hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
 
-        <div className="collapse navbar-collapse" id="navbarNav">
-
-          <ul className="navbar-nav me-auto">
-            <li className="nav-item">
+        {/* Links */}
+        <div className="nav-menu">
+          <ul className="nav-links-left">
+            <li>
               <Link className="nav-link" to="/home">Home</Link>
             </li>
-
             {isLoggedIn && (
               <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/add-blog">Add Blog</Link>
+                <li>
+                  <Link className="nav-link" to="/add-blog">Write</Link>
                 </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/viewblog">View Blog</Link>
+                <li>
+                  <Link className="nav-link" to="/viewblog">Explore</Link>
                 </li>
               </>
             )}
           </ul>
 
-          <ul className="navbar-nav">
+          <ul className="nav-links-right">
             {!isLoggedIn ? (
               <>
-                <li className="nav-item">
+                <li>
                   <Link className="nav-link" to="/login">Login</Link>
                 </li>
-                <li className="nav-item">
-                  <Link className="btn btn-primary ms-2" to="/signup">Sign Up</Link>
+                <li>
+                  <Link className="nav-btn-signup" to="/signup">Get Started</Link>
                 </li>
               </>
             ) : (
               <>
-                <li className="nav-item d-flex align-items-center me-3">
-                  <span className="nav-welcome">👋 {username}</span>
+                <li className="nav-user">
+                  <span className="user-avatar">{username.charAt(0).toUpperCase()}</span>
+                  <span className="user-name">{username}</span>
                 </li>
-                <li className="nav-item">
-                  <button className="btn btn-danger ms-2" onClick={handleLogout}>
-                    Logout
+                <li>
+                  <button className="nav-btn-logout" onClick={handleLogout}>
+                    Sign Out
                   </button>
                 </li>
               </>
             )}
           </ul>
-
         </div>
+
       </div>
     </nav>
   );

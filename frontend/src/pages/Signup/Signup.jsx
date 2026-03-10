@@ -15,7 +15,7 @@ function Signup() {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ Step 1 — Send OTP
+  // Send OTP
   const handleSendOtp = async (e) => {
     e.preventDefault();
 
@@ -50,7 +50,7 @@ function Signup() {
     }
   };
 
-  // ✅ Step 2 — Verify OTP and Signup
+  // Verify OTP and Signup
   const handleSignup = async (e) => {
     e.preventDefault();
 

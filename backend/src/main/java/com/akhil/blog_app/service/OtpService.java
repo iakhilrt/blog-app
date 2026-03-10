@@ -29,13 +29,14 @@ public class OtpService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setTo(email);
-            helper.setSubject("Your Blog App OTP");
+            helper.setSubject("Your Inkwell OTP");
 
-            // HTML email with bold OTP
             String html = """
                     <div style="font-family: Arial, sans-serif; padding: 20px;">
-                        <h2 style="color: #6a5af9;">Your Blog App OTP</h2>
+                        <h2 style="color: #6a5af9;">Your Inkwell OTP</h2>
+                    
                         <p>Use the OTP below to complete your signup:</p>
+                    
                         <div style="
                             font-size: 32px;
                             font-weight: bold;
@@ -46,13 +47,21 @@ public class OtpService {
                             border-radius: 10px;
                             display: inline-block;
                             margin: 16px 0;
-                        ">%s</div>
+                        ">
+                            %s
+                        </div>
+                    
                         <p>This OTP is valid for <strong>5 minutes</strong>.</p>
+                    
                         <p style="color: #999; font-size: 12px;">
                             If you did not request this, please ignore this email.
                         </p>
+                    
                         <hr style="border: none; border-top: 1px solid #eee;" />
-                        <p style="color: #999; font-size: 12px;">Thank You — Blog App</p>
+                    
+                        <p style="color: #999; font-size: 12px;">
+                            Thank You — <strong>Inkwell</strong>
+                        </p>
                     </div>
                     """.formatted(otp);
 
