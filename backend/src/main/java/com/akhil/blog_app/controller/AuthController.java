@@ -19,6 +19,11 @@ public class AuthController {
     private final AuthService authService;
     private final OtpService otpService;
 
+    @GetMapping("/health-check")
+    public String health() {
+        return "OK";
+    }
+
     // Send OTP
     @PostMapping("/send-otp")
     public ResponseEntity<String> sendOtp(@RequestBody Map<String, String> body) {
