@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./AddBlog.css";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function AddBlog() {
@@ -10,29 +11,61 @@ function AddBlog() {
   const [image, setImage] = useState("");
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
-  const handleImageChange = (e) => {
+  // ✅ NEW — Upload to Cloudinary instead of Base64
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImage(reader.result);
-      setPreview(reader.result);
-    };
-    reader.readAsDataURL(file);
+
+    // Show local preview instantly
+    setPreview(URL.createObjectURL(file));
+    setUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+
+      const res = await axios.post(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        formData
+      );
+
+      setImage(res.data.secure_url); // ✅ Save Cloudinary URL
+
+      Swal.fire({
+        icon: "success",
+        title: "Image Uploaded! ✅",
+        timer: 1200,
+        showConfirmButton: false,
+      });
+
+    } catch (error) {
+      Swal.fire("Error", "Image upload to Cloudinary failed!", "error");
+      setPreview(null);
+      setImage("");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
+    if (!image) {
+      Swal.fire("Oops!", "Please wait for image to finish uploading!", "warning");
+      return;
+    }
+
+    setLoading(true);
     try {
       await api.post("/api/blogs/add", { title, description, image });
 
       Swal.fire({
         icon: "success",
-        title: "Blog Added!",
+        title: "Blog Published!",
         text: "Your blog is now live 🎉",
         timer: 1800,
         showConfirmButton: false,
@@ -85,11 +118,15 @@ function AddBlog() {
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                required
                 id="imageInput"
               />
               <label htmlFor="imageInput" className="image-upload-label">
-                {preview ? (
+                {uploading ? (
+                  <div className="image-placeholder">
+                    <span>⏳</span>
+                    <p>Uploading to Cloudinary...</p>
+                  </div>
+                ) : preview ? (
                   <img src={preview} alt="Preview" className="image-preview" />
                 ) : (
                   <div className="image-placeholder">
@@ -111,8 +148,16 @@ function AddBlog() {
             />
           </div>
 
-          <button type="submit" className="addblog-btn" disabled={loading}>
-            {loading ? "Publishing..." : "Publish Blog 🚀"}
+          <button
+            type="submit"
+            className="addblog-btn"
+            disabled={loading || uploading}
+          >
+            {uploading
+              ? "Uploading Image..."
+              : loading
+              ? "Publishing..."
+              : "Publish Blog 🚀"}
           </button>
 
         </form>

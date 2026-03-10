@@ -3,6 +3,7 @@ package com.akhil.blog_app.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -11,7 +12,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "akhil_blog_app_super_secret_key_2025_secure";
+    @Value("${JWT_SECRET}")
+    private String SECRET;
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
@@ -23,7 +25,7 @@ public class JwtUtil {
                 .subject(email)                    // ← was setSubject()
                 .claim("role", role)
                 .issuedAt(new Date())              // ← was setIssuedAt()
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))  // ← was setExpiration()
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getSigningKey())         // ← no need for algorithm parameter
                 .compact();
     }

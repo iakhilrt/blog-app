@@ -35,7 +35,13 @@ function Login() {
         text: `Welcome back, ${data.name} 🎉`,
         timer: 2500,
         showConfirmButton: false,
-      }).then(() => navigate("/viewblog"));
+      }).then(() => {
+        if (data.role === "ADMIN") {
+          navigate("/admin-dashboard");
+        } else {
+          navigate("/viewblog");
+        }
+      });
 
       form.reset();
 

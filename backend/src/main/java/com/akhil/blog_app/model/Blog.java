@@ -21,7 +21,7 @@ public class Blog {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "LONGTEXT") // Base64 image can be large
+    @Column(length = 500)
     private String image;
 
     @Column(nullable = false)

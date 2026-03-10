@@ -19,7 +19,10 @@ import AdminLogin from "./admin/AdminLogin/AdminLogin";
 import AdminLayout from "./admin/AdminLayout";
 import AdminRoute from "./admin/AdminRoute";
 
-// Layout wrapper — pages with Navbar + Footer
+// Protected Route
+import ProtectedRoute from "./components/ProtectedRoute";
+
+// Layout wrapper
 function MainLayout({ children }) {
   return (
     <>
@@ -38,7 +41,7 @@ function App() {
         {/* Redirect root to home */}
         <Route path="/" element={<Navigate to="/home" replace />} />
 
-        {/* Public pages — with Navbar & Footer */}
+        {/* Public pages */}
         <Route path="/home" element={
           <MainLayout><LandingPage /></MainLayout>
         } />
@@ -48,23 +51,29 @@ function App() {
         <Route path="/login" element={
           <MainLayout><Login /></MainLayout>
         } />
+        <Route path="/about" element={
+          <MainLayout><About /></MainLayout>
+        } />
+        <Route path="/contact" element={
+          <MainLayout><Contact /></MainLayout>
+        } />
+
+        {/* Public blog viewing */}
         <Route path="/viewblog" element={
           <MainLayout><ViewBlog /></MainLayout>
         } />
         <Route path="/blog/:id" element={
           <MainLayout><ViewBlogDetails /></MainLayout>
         } />
+
+        {/* 🔒 Protected — login required */}
         <Route path="/add-blog" element={
-          <MainLayout><AddBlog /></MainLayout>
-        } />
-        <Route path="/contact" element={
-          <MainLayout><Contact /></MainLayout>
-        } />
-        <Route path="/about" element={
-          <MainLayout><About /></MainLayout>
+          <ProtectedRoute>
+            <MainLayout><AddBlog /></MainLayout>
+          </ProtectedRoute>
         } />
 
-        {/* Admin pages — no Navbar/Footer on login */}
+        {/* Admin pages */}
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin-dashboard" element={
           <AdminRoute>
