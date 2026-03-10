@@ -23,6 +23,9 @@ import AdminRoute from "./admin/AdminRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EditBlog from "./pages/EditBlog/EditBlog";
 
+// Vercel Analytics
+import { Analytics } from "@vercel/analytics/react"
+
 // Layout wrapper
 function MainLayout({ children }) {
   return (
@@ -37,6 +40,7 @@ function MainLayout({ children }) {
 function App() {
   return (
     <BrowserRouter>
+
       <Routes>
 
         <Route path="/" element={
@@ -74,14 +78,14 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* 🔒 Protected — login required */}
+        {/* Protected */}
         <Route path="/add-blog" element={
           <ProtectedRoute>
             <MainLayout><AddBlog /></MainLayout>
           </ProtectedRoute>
         } />
 
-        {/* Admin pages */}
+        {/* Admin */}
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin-dashboard" element={
           <AdminRoute>
@@ -89,10 +93,13 @@ function App() {
           </AdminRoute>
         } />
 
-        {/* 404 fallback */}
-        <Route path="*" element={<Navigate to="/home" replace />} />
+        {/* 404 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
 
       </Routes>
+
+      <Analytics />
+
     </BrowserRouter>
   );
 }
