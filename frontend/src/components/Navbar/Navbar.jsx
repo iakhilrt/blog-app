@@ -6,6 +6,7 @@ function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,37 +39,42 @@ function Navbar() {
     navigate("/login");
   };
 
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <nav className={`inkwell-nav${scrolled ? " scrolled" : ""}`}>
       <div className="nav-container">
 
         {/* Brand */}
-        <Link className="nav-brand" to="/home">
+        <Link className="nav-brand" to="/home" onClick={closeMenu}>
           <span className="brand-icon">✦</span>
           <span className="brand-text">Inkwell</span>
         </Link>
 
-        {/* Hamburger */}
-        <input type="checkbox" id="nav-toggle" className="nav-toggle-input" />
-        <label htmlFor="nav-toggle" className="nav-hamburger">
+        {/* Hamburger button */}
+        <button
+          className={`nav-hamburger${menuOpen ? " open" : ""}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
+        >
           <span></span>
           <span></span>
           <span></span>
-        </label>
+        </button>
 
         {/* Links */}
-        <div className="nav-menu">
+        <div className={`nav-menu${menuOpen ? " open" : ""}`}>
           <ul className="nav-links-left">
             <li>
-              <Link className="nav-link" to="/home">Home</Link>
+              <Link className="nav-link" to="/home" onClick={closeMenu}>Home</Link>
             </li>
             {isLoggedIn && (
               <>
                 <li>
-                  <Link className="nav-link" to="/add-blog">Write</Link>
+                  <Link className="nav-link" to="/add-blog" onClick={closeMenu}>Write</Link>
                 </li>
                 <li>
-                  <Link className="nav-link" to="/viewblog">Explore</Link>
+                  <Link className="nav-link" to="/viewblog" onClick={closeMenu}>Explore</Link>
                 </li>
               </>
             )}
@@ -78,10 +84,10 @@ function Navbar() {
             {!isLoggedIn ? (
               <>
                 <li>
-                  <Link className="nav-link" to="/login">Login</Link>
+                  <Link className="nav-link" to="/login" onClick={closeMenu}>Login</Link>
                 </li>
                 <li>
-                  <Link className="nav-btn-signup" to="/signup">Get Started</Link>
+                  <Link className="nav-btn-signup" to="/signup" onClick={closeMenu}>Get Started</Link>
                 </li>
               </>
             ) : (
@@ -91,7 +97,7 @@ function Navbar() {
                   <span className="user-name">{username}</span>
                 </li>
                 <li>
-                  <button className="nav-btn-logout" onClick={handleLogout}>
+                  <button className="nav-btn-logout" onClick={() => { handleLogout(); closeMenu(); }}>
                     Sign Out
                   </button>
                 </li>

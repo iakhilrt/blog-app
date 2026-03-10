@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap');
 
-/* =============================
-   INKWELL NAVBAR
-   ============================= */
 
 .inkwell-nav {
   position: sticky;
@@ -15,6 +12,7 @@
   padding: 0 24px;
   transition: background 0.35s ease, box-shadow 0.35s ease;
   font-family: 'DM Sans', sans-serif;
+  width: 100%;
 }
 
 .inkwell-nav.scrolled {
@@ -30,6 +28,7 @@
   justify-content: space-between;
   height: 64px;
   gap: 16px;
+  position: relative;
 }
 
 /* ---- Brand ---- */
@@ -62,18 +61,17 @@
   line-height: 1;
 }
 
-/* ---- Hamburger (pure CSS) ---- */
-.nav-toggle-input {
-  display: none;
-}
-
+/* ---- Hamburger ---- */
 .nav-hamburger {
   display: none;
   flex-direction: column;
   gap: 5px;
   cursor: pointer;
   padding: 6px;
-  z-index: 10;
+  background: none;
+  border: none;
+  outline: none;
+  z-index: 1100;
 }
 
 .nav-hamburger span {
@@ -85,13 +83,14 @@
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.nav-toggle-input:checked ~ .nav-hamburger span:nth-child(1) {
+/* Animate to X when open */
+.nav-hamburger.open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
-.nav-toggle-input:checked ~ .nav-hamburger span:nth-child(2) {
+.nav-hamburger.open span:nth-child(2) {
   opacity: 0;
 }
-.nav-toggle-input:checked ~ .nav-hamburger span:nth-child(3) {
+.nav-hamburger.open span:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
 
@@ -123,7 +122,6 @@
   padding: 6px 14px;
   border-radius: 8px;
   transition: color 0.2s ease, background 0.2s ease;
-  position: relative;
 }
 
 .nav-link:hover {
@@ -145,14 +143,13 @@
   color: #0a0a12;
   border: none;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   letter-spacing: 0.2px;
 }
 
 .nav-btn-signup:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(232, 201, 126, 0.4);
-  opacity: 0.92;
   color: #0a0a12;
 }
 
@@ -169,7 +166,6 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
   transition: all 0.2s ease;
-  letter-spacing: 0.2px;
 }
 
 .nav-btn-logout:hover {
@@ -227,20 +223,24 @@
     top: 64px;
     left: 0;
     right: 0;
+    width: 100%;
     background: rgba(10, 10, 18, 0.98);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     flex-direction: column;
     align-items: stretch;
     padding: 20px 24px 28px;
     gap: 0;
     border-bottom: 1px solid rgba(255,255,255,0.08);
+    /* Hidden by default */
     transform: translateY(-110%);
     opacity: 0;
     pointer-events: none;
     transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
   }
 
-  .nav-toggle-input:checked ~ .nav-menu {
+  /* Shown when open class added via React */
+  .nav-menu.open {
     transform: translateY(0);
     opacity: 1;
     pointer-events: all;
