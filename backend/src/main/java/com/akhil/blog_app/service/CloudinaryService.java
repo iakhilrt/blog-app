@@ -29,7 +29,7 @@ public class CloudinaryService {
         ));
     }
 
-    // ✅ Extract public_id from URL and delete
+    // Extract public_id from URL and delete
     public void deleteImage(String imageUrl) {
         try {
             if (imageUrl == null || imageUrl.isEmpty()) return;

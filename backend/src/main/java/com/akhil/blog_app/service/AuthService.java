@@ -3,6 +3,8 @@ package com.akhil.blog_app.service;
 import com.akhil.blog_app.dto.request.LoginRequest;
 import com.akhil.blog_app.dto.request.SignupRequest;
 import com.akhil.blog_app.dto.response.AuthResponse;
+import com.akhil.blog_app.exception.ResourceNotFoundException;
+import com.akhil.blog_app.exception.UnauthorizedException;
 import com.akhil.blog_app.model.User;
 import com.akhil.blog_app.repository.UserRepository;
 import com.akhil.blog_app.security.JwtUtil;
@@ -43,11 +45,11 @@ public class AuthService {
 
         // Find user by email
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Email not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Email not found!"));
 
         // Check password
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Incorrect password!");
+            throw new UnauthorizedException("Incorrect password!");
         }
 
         // Generate JWT token

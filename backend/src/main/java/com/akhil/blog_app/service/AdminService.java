@@ -1,5 +1,6 @@
 package com.akhil.blog_app.service;
 
+import com.akhil.blog_app.exception.ResourceNotFoundException;
 import com.akhil.blog_app.model.Blog;
 import com.akhil.blog_app.model.User;
 import com.akhil.blog_app.repository.BlogRepository;
@@ -18,20 +19,20 @@ public class AdminService {
     private final BlogRepository blogRepository;
     private final CloudinaryService cloudinaryService;
 
-    // ✅ Delete user + all their blogs + all their images
+    // Delete user + all their blogs + all their images
     @Transactional
     public String deleteUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
 
-        // Step 1 — Delete all their images from Cloudinary
+        // Delete all their images from Cloudinary
         List<Blog> blogs = blogRepository.findByAuthor(user);
         blogs.forEach(blog -> cloudinaryService.deleteImage(blog.getImage()));
 
-        // Step 2 — Delete all their blogs from DB
+        // Delete all their blogs from DB
         blogRepository.deleteByAuthor(user);
 
-        // Step 3 — Delete the user from DB
+        // Delete the user from DB
         userRepository.delete(user);
 
         return "User and all their blogs deleted successfully!";

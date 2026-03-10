@@ -2,6 +2,8 @@ package com.akhil.blog_app.service;
 
 import com.akhil.blog_app.dto.request.BlogRequest;
 import com.akhil.blog_app.dto.response.BlogResponse;
+import com.akhil.blog_app.exception.ResourceNotFoundException;
+import com.akhil.blog_app.exception.UnauthorizedException;
 import com.akhil.blog_app.model.Blog;
 import com.akhil.blog_app.model.User;
 import com.akhil.blog_app.repository.BlogRepository;
@@ -24,7 +26,7 @@ public class BlogService {
     public BlogResponse addBlog(BlogRequest request, String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
 
         Blog blog = new Blog();
         blog.setTitle(request.getTitle());
@@ -39,10 +41,10 @@ public class BlogService {
     // EDIT BLOG
     public BlogResponse updateBlog(Long id, BlogRequest request, String email) {
         Blog blog = blogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Blog not found!"));
 
         if (!blog.getAuthor().getEmail().equals(email)) {
-            throw new RuntimeException("You are not authorized to edit this blog!");
+            throw new UnauthorizedException("You are not authorized to edit this blog!");
         }
 
         if (request.getTitle() != null && !request.getTitle().isEmpty()) {
@@ -53,7 +55,7 @@ public class BlogService {
             blog.setDescription(request.getDescription());
         }
 
-        //  Delete old image from Cloudinary before saving new one
+        // Delete old image from Cloudinary before saving new one
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             cloudinaryService.deleteImage(blog.getImage()); // delete old
             blog.setImage(request.getImage());              // save new
@@ -74,14 +76,14 @@ public class BlogService {
     // GET SINGLE BLOG
     public BlogResponse getBlogById(Long id) {
         Blog blog = blogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Blog not found!"));
         return mapToResponse(blog);
     }
 
-    // DELETE BLOG — ✅ also deletes image from Cloudinary
+    // DELETE BLOG — also deletes image from Cloudinary
     public String deleteBlog(Long id) {
         Blog blog = blogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Blog not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Blog not found!"));
         cloudinaryService.deleteImage(blog.getImage());
         blogRepository.delete(blog);
         return "Blog deleted successfully!";
@@ -90,7 +92,7 @@ public class BlogService {
     // GET BLOGS BY USER
     public List<BlogResponse> getBlogsByUser(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
         return blogRepository.findByAuthor(user)
                 .stream()
                 .map(this::mapToResponse)
