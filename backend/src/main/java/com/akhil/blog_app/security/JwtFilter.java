@@ -26,9 +26,10 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        System.out.println("🔍 JwtFilter hit: " + request.getRequestURI());
+
         String authHeader = request.getHeader("Authorization");
 
-        // ✅ No token? Just continue — let Security config decide
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -37,7 +38,6 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             String token = authHeader.substring(7);
 
-            // ✅ Validate token before using it
             if (jwtUtil.isTokenValid(token)) {
                 String email = jwtUtil.extractEmail(token);
                 String role  = jwtUtil.extractRole(token);

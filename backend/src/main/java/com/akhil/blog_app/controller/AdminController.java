@@ -4,6 +4,7 @@ import com.akhil.blog_app.dto.response.BlogResponse;
 import com.akhil.blog_app.dto.response.UserResponse;
 import com.akhil.blog_app.model.User;
 import com.akhil.blog_app.repository.UserRepository;
+import com.akhil.blog_app.service.AdminService;
 import com.akhil.blog_app.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class AdminController {
 
     private final BlogService blogService;
     private final UserRepository userRepository;
-
+    private final AdminService adminService;
 
     @GetMapping("/blogs")
     @PreAuthorize("hasRole('ADMIN')")
@@ -28,13 +29,11 @@ public class AdminController {
         return ResponseEntity.ok(blogService.getAllBlogs());
     }
 
-
     @DeleteMapping("/blogs/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteBlog(@PathVariable Long id) {
         return ResponseEntity.ok(blogService.deleteBlog(id));
     }
-
 
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
@@ -44,5 +43,12 @@ public class AdminController {
                 .map(u -> new UserResponse(u.getId(), u.getName(), u.getEmail(), u.getRole()))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
+    }
+
+    // Delete user + all their blogs + Cloudinary images
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        return ResponseEntity.ok(adminService.deleteUser(id));
     }
 }

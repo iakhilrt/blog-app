@@ -18,7 +18,7 @@ function AdminDashboard() {
     }).finally(() => setLoading(false));
   }, []);
 
-  const handleDelete = (id) => {
+  const handleDeleteBlog = (id) => {
     Swal.fire({
       title: "Delete Blog?",
       text: "This action cannot be undone!",
@@ -32,9 +32,46 @@ function AdminDashboard() {
         try {
           await api.delete(`/api/admin/blogs/${id}`);
           setBlogs(blogs.filter((b) => b.id !== id));
-          Swal.fire("Deleted!", "Blog has been deleted.", "success");
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: "Blog has been deleted.",
+            timer: 1800,
+            showConfirmButton: false,
+          });
         } catch {
           Swal.fire("Error", "Failed to delete blog.", "error");
+        }
+      }
+    });
+  };
+
+  // ✅ Delete user + all their blogs
+  const handleDeleteUser = (id, name) => {
+    Swal.fire({
+      title: `Delete ${name}?`,
+      text: "This will delete the user and ALL their blogs permanently!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#e11d48",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Yes, delete!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await api.delete(`/api/admin/users/${id}`);
+          setUsers(users.filter((u) => u.id !== id));
+          // Also remove their blogs from blogs list
+          setBlogs(blogs.filter((b) => b.authorName !== name));
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: "User and all their blogs removed.",
+            timer: 1800,
+            showConfirmButton: false,
+          });
+        } catch {
+          Swal.fire("Error", "Failed to delete user.", "error");
         }
       }
     });
@@ -100,7 +137,7 @@ function AdminDashboard() {
                     <td>
                       <button
                         className="delete-btn"
-                        onClick={() => handleDelete(blog.id)}
+                        onClick={() => handleDeleteBlog(blog.id)}
                       >
                         🗑️ Delete
                       </button>
@@ -124,12 +161,13 @@ function AdminDashboard() {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="empty-row">No users found</td>
+                  <td colSpan="5" className="empty-row">No users found</td>
                 </tr>
               ) : (
                 users.map((user, index) => (
@@ -141,6 +179,19 @@ function AdminDashboard() {
                       <span className={`role-badge ${user.role.toLowerCase()}`}>
                         {user.role}
                       </span>
+                    </td>
+                    <td>
+                      {/*Don't show delete for ADMIN */}
+                      {user.role !== "ADMIN" ? (
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDeleteUser(user.id, user.name)}
+                        >
+                          🗑️ Delete
+                        </button>
+                      ) : (
+                        <span className="protected-badge">🔒 Protected</span>
+                      )}
                     </td>
                   </tr>
                 ))
