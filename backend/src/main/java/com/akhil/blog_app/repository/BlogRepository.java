@@ -12,8 +12,5 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     // Get all blogs by a specific user
     List<Blog> findByAuthor(User author);
 
-    // Get all blogs ordered by newest first
-    List<Blog> findAllByOrderByCreatedAtDesc();
-
     void deleteByAuthor(User user);
 }

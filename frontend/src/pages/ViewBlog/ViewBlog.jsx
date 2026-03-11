@@ -3,25 +3,38 @@ import "./ViewBlog.css";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 
+const PAGE_SIZE = 6;
+
 function ViewBlog() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
-  // ✅ Get logged in user's email
   const loggedInEmail = localStorage.getItem("email");
 
   useEffect(() => {
-    api.get("/api/blogs")
-      .then(({ data }) => setBlogs(data))
+    setLoading(true);
+    api.get(`/api/blogs?page=${currentPage}&size=${PAGE_SIZE}`)
+      .then(({ data }) => {
+        setBlogs(data.content);
+        setTotalPages(data.totalPages);
+      })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
-  }, []);
+  }, [currentPage]);
 
   const filtered = blogs.filter((blog) =>
     blog.title.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handlePageChange = (page) => {
+    if (page < 0 || page >= totalPages) return;
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   if (loading) {
     return (
@@ -43,7 +56,10 @@ function ViewBlog() {
             type="text"
             placeholder="Search blogs..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(0);
+            }}
           />
         </div>
       </div>
@@ -83,7 +99,6 @@ function ViewBlog() {
                     <Link to={`/blog/${blog.id}`} className="blog-read-btn">
                       Read More →
                     </Link>
-                    {/* ✅ Show Edit only to the author */}
                     {blog.authorEmail === loggedInEmail && (
                       <button
                         className="blog-edit-btn"
@@ -98,6 +113,36 @@ function ViewBlog() {
             </div>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="page-btn"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 0}
+            >
+              ← Prev
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                className={`page-btn ${currentPage === i ? "active" : ""}`}
+                onClick={() => handlePageChange(i)}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button
+              className="page-btn"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages - 1}
+            >
+              Next →
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

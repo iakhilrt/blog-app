@@ -4,6 +4,7 @@ import com.akhil.blog_app.dto.request.BlogRequest;
 import com.akhil.blog_app.dto.response.BlogResponse;
 import com.akhil.blog_app.service.BlogService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +18,13 @@ public class BlogController {
 
     private final BlogService blogService;
 
-    // GET /api/blogs — public
     @GetMapping
-    public ResponseEntity<List<BlogResponse>> getAllBlogs() {
-        return ResponseEntity.ok(blogService.getAllBlogs());
+    public ResponseEntity<Page<BlogResponse>> getAllBlogs(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size) {
+        return ResponseEntity.ok(blogService.getAllBlogs(page, size));
     }
 
-    // GET /api/blogs/{id} — public
     @GetMapping("/{id}")
     public ResponseEntity<BlogResponse> getBlogById(@PathVariable Long id) {
         return ResponseEntity.ok(blogService.getBlogById(id));

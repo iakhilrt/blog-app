@@ -26,7 +26,7 @@ public class AdminController {
     @GetMapping("/blogs")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<BlogResponse>> getAllBlogs() {
-        return ResponseEntity.ok(blogService.getAllBlogs());
+        return ResponseEntity.ok(blogService.getAllBlogsForAdmin());
     }
 
     @DeleteMapping("/blogs/{id}")

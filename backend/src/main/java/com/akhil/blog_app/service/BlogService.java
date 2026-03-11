@@ -9,6 +9,10 @@ import com.akhil.blog_app.model.User;
 import com.akhil.blog_app.repository.BlogRepository;
 import com.akhil.blog_app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -65,9 +69,15 @@ public class BlogService {
         return mapToResponse(blog);
     }
 
-    // GET ALL BLOGS
-    public List<BlogResponse> getAllBlogs() {
-        return blogRepository.findAllByOrderByCreatedAtDesc()
+
+    public Page<BlogResponse> getAllBlogs(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return blogRepository.findAll(pageable)
+                .map(this::mapToResponse);
+    }
+
+    public List<BlogResponse> getAllBlogsForAdmin() {
+        return blogRepository.findAll(Sort.by("createdAt").descending())
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
