@@ -5,6 +5,19 @@ function Contact() {
 
   function handleSubmit(e) {
     e.preventDefault();
+
+    const form = e.target;
+    const data = new FormData(form);
+
+    fetch(
+      "https://docs.google.com/forms/d/e/1FAIpQLScxlXFIT31eqc6oSoTSnVbOZTkkIe9iVfwS157mJUSRP5pcWw/formResponse",
+      {
+        method: "POST",
+        mode: "no-cors",
+        body: data,
+      }
+    );
+
     Swal.fire({
       icon: "success",
       title: "Message Sent!",
@@ -12,7 +25,8 @@ function Contact() {
       timer: 2500,
       showConfirmButton: false,
     });
-    e.target.reset();
+
+    form.reset();
   }
 
   return (
@@ -28,17 +42,17 @@ function Contact() {
         <form className="contact-form" onSubmit={handleSubmit}>
 
           <div className="input-group">
-            <input type="text" required />
+            <input name="entry.279262906" type="text" required />
             <label>Your Name</label>
           </div>
 
           <div className="input-group">
-            <input type="email" required />
+            <input name="entry.2065337350" type="email" required />
             <label>Your Email</label>
           </div>
 
           <div className="input-group">
-            <textarea required></textarea>
+            <textarea name="entry.1308446748" required></textarea>
             <label>Your Message</label>
           </div>
 
