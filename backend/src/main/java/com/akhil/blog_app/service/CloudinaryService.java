@@ -34,14 +34,23 @@ public class CloudinaryService {
         try {
             if (imageUrl == null || imageUrl.isEmpty()) return;
 
-            // Extract public_id from URL
-            // URL: https://res.cloudinary.com/dkqwsd1km/image/upload/v123456/abcd1234.jpg
-            // public_id = abcd1234
-            String publicId = imageUrl
-                    .substring(imageUrl.lastIndexOf("/") + 1)  // get "abcd1234.jpg"
-                    .split("\\.")[0];                           // remove extension → "abcd1234"
+            // Extract everything after /upload/vXXXXXX/
+            // URL: https://res.cloudinary.com/cloud/image/upload/v123456/blog_images/abc.jpg
+            // public_id = blog_images/abc
+
+            String afterUpload = imageUrl.substring(imageUrl.indexOf("/upload/") + 8);
+            // afterUpload = "v123456/blog_images/abc.jpg"
+
+            // Remove version part (v123456/)
+            String withoutVersion = afterUpload.replaceFirst("v\\d+/", "");
+            // withoutVersion = "blog_images/abc.jpg"
+
+            // Remove file extension
+            String publicId = withoutVersion.substring(0, withoutVersion.lastIndexOf("."));
+            // publicId = "blog_images/abc"
 
             cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            System.out.println("Deleted from Cloudinary: " + publicId);
 
         } catch (Exception e) {
             System.out.println("Failed to delete image from Cloudinary: " + e.getMessage());
