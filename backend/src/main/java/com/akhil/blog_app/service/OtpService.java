@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -28,6 +29,7 @@ public class OtpService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
+            helper.setFrom("noreply@inkwell.akhilrt.com", "Inkwell");
             helper.setTo(email);
             helper.setSubject("Your Inkwell OTP");
 
@@ -65,11 +67,11 @@ public class OtpService {
                     </div>
                     """.formatted(otp);
 
-            helper.setText(html, true); // true = send as HTML
+            helper.setText(html, true);
 
             mailSender.send(message);
 
-        } catch (MessagingException e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException("Failed to send OTP email!", e);
         }
     }

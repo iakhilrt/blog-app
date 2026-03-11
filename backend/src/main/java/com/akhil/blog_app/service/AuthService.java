@@ -57,4 +57,8 @@ public class AuthService {
 
         return new AuthResponse(token, user.getName(), user.getEmail(), user.getRole());
     }
+
+    public boolean emailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }

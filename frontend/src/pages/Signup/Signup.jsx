@@ -72,11 +72,10 @@ function Signup() {
       }).then(() => navigate("/login"));
 
     } catch (error) {
-      Swal.fire(
-        "Error",
-        error.response?.data || "Signup failed! Try again.",
-        "error"
-      );
+      const message = error.response?.data?.message
+        || error.response?.data
+        || "Signup failed! Try again.";
+      Swal.fire("Error", message, "error");
     } finally {
       setLoading(false);
     }
@@ -138,7 +137,7 @@ function Signup() {
             </button>
             <p className="signup-bottom">
               Didn't receive OTP?{" "}
-              <span className="login-link" style={{cursor:"pointer"}}
+              <span className="login-link" style={{ cursor: "pointer" }}
                 onClick={() => setStep(1)}>
                 Go Back
               </span>

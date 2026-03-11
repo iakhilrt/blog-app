@@ -40,10 +40,17 @@ public class AuthController {
     //Verify OTP + Signup
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest request) {
-        // Verify OTP first
+
+        // Check email FIRST via service
+        if (authService.emailExists(request.getEmail())) {
+            return ResponseEntity.badRequest().body("Email already registered!");
+        }
+
+        // Then verify OTP
         if (!otpService.verifyOtp(request.getEmail(), request.getOtp())) {
             return ResponseEntity.badRequest().body("Invalid or expired OTP!");
         }
+
         return ResponseEntity.ok(authService.signup(request));
     }
 
