@@ -35,6 +35,7 @@ function Navbar() {
     localStorage.removeItem("role");
     localStorage.removeItem("name");
     localStorage.removeItem("email");
+    localStorage.removeItem("isAdminLoggedIn");
     window.dispatchEvent(new Event("login-status-changed"));
     navigate("/login");
   };
