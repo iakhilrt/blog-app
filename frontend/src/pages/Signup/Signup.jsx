@@ -34,7 +34,7 @@ function Signup() {
 
     setLoading(true);
     try {
-      await api.post("/api/auth/send-otp", { email });
+      await api.post("/api/auth/send-otp", { name, email });
 
       Swal.fire({
         icon: "success",
