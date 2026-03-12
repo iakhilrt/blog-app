@@ -1,6 +1,7 @@
 package com.akhil.blog_app.controller;
 
 import com.akhil.blog_app.dto.request.LoginRequest;
+import com.akhil.blog_app.dto.request.OtpRequest;
 import com.akhil.blog_app.dto.request.SignupRequest;
 import com.akhil.blog_app.dto.response.AuthResponse;
 import com.akhil.blog_app.service.AuthService;
@@ -26,14 +27,23 @@ public class AuthController {
 
     // Send OTP
     @PostMapping("/send-otp")
-    public ResponseEntity<String> sendOtp(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
+    public ResponseEntity<String> sendOtp(@RequestBody OtpRequest request) {
+
         try {
-            otpService.sendOtp(email);
-            return ResponseEntity.ok("OTP sent to " + email);
+
+            otpService.sendOtp(
+                    request.getEmail(),
+                    request.getName()
+            );
+
+            return ResponseEntity.ok("OTP sent");
+
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Failed: " + e.getMessage());
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body("Failed to send OTP");
+
         }
     }
 
