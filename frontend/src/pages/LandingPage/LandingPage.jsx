@@ -23,7 +23,7 @@ function LandingPage() {
             Create, share, and discover stories that matter.
           </p>
           <div className="hero-buttons">
-            <Link to="/signup" className="hero-btn-primary">
+            <Link to="/add-blog" className="hero-btn-primary">
               Start Writing <span className="btn-arrow">→</span>
             </Link>
             <Link to="/viewblog" className="hero-btn-secondary">
