@@ -14,12 +14,10 @@ function AddBlog() {
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ NEW — Upload to Cloudinary instead of Base64
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Show local preview instantly
     setPreview(URL.createObjectURL(file));
     setUploading(true);
 
@@ -33,17 +31,17 @@ function AddBlog() {
         formData
       );
 
-      setImage(res.data.secure_url); // ✅ Save Cloudinary URL
+      setImage(res.data.secure_url);
 
       Swal.fire({
         icon: "success",
-        title: "Image Uploaded! ✅",
+        title: "Image Uploaded ✅",
         timer: 1200,
         showConfirmButton: false,
       });
 
     } catch (error) {
-      Swal.fire("Error", "Image upload to Cloudinary failed!", "error");
+      Swal.fire("Error", "Image upload failed!", "error");
       setPreview(null);
       setImage("");
     } finally {
@@ -78,11 +76,7 @@ function AddBlog() {
       e.target.reset();
 
     } catch (error) {
-      Swal.fire(
-        "Error",
-        error.response?.data || "Failed to add blog!",
-        "error"
-      );
+      Swal.fire("Error", error.response?.data || "Failed to add blog!", "error");
     } finally {
       setLoading(false);
     }
@@ -90,12 +84,13 @@ function AddBlog() {
 
   return (
     <div className="addblog-page">
+      <div className="addblog-orb"></div>
       <div className="addblog-card">
 
         <div className="addblog-header">
-          <div className="addblog-icon">✍️</div>
-          <h1>Add New Blog</h1>
-          <p>Share your thoughts with the world</p>
+          <span className="addblog-eyebrow">✦ Share Your Thoughts</span>
+          <h1>Write a New Blog</h1>
+          <p>Tell your story — the world is listening</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -124,14 +119,14 @@ function AddBlog() {
                 {uploading ? (
                   <div className="image-placeholder">
                     <span>⏳</span>
-                    <p>Uploading to Cloudinary...</p>
+                    <p>Uploading...</p>
                   </div>
                 ) : preview ? (
                   <img src={preview} alt="Preview" className="image-preview" />
                 ) : (
                   <div className="image-placeholder">
                     <span>📷</span>
-                    <p>Click to upload image</p>
+                    <p>Click to upload cover image</p>
                   </div>
                 )}
               </label>
@@ -139,7 +134,7 @@ function AddBlog() {
           </div>
 
           <div className="addblog-field">
-            <label>Description</label>
+            <label>Content</label>
             <textarea
               placeholder="Write your blog content here..."
               value={description}
@@ -157,7 +152,7 @@ function AddBlog() {
               ? "Uploading Image..."
               : loading
               ? "Publishing..."
-              : "Publish Blog 🚀"}
+              : "Publish Blog →"}
           </button>
 
         </form>

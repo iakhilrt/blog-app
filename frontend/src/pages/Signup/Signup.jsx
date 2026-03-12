@@ -1,13 +1,17 @@
 import { useState } from "react";
 import "./Signup.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
 
 function Signup() {
   const navigate = useNavigate();
 
-  const [step, setStep] = useState(1); // step 1 = form, step 2 = otp
+  if (localStorage.getItem("isLoggedIn") === "true") {
+    return <Navigate to="/viewblog" replace />;
+  }
+
+  const [step, setStep] = useState(1);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,7 +19,6 @@ function Signup() {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Send OTP
   const handleSendOtp = async (e) => {
     e.preventDefault();
 
@@ -36,13 +39,12 @@ function Signup() {
       Swal.fire({
         icon: "success",
         title: "OTP Sent!",
-        text: `Check your email ${email} for the OTP 📧`,
+        text: `Check ${email} for your code 📧`,
         timer: 2000,
         showConfirmButton: false,
       });
 
-      setStep(2); // move to OTP step
-
+      setStep(2);
     } catch (error) {
       Swal.fire("Error", "Failed to send OTP! Try again.", "error");
     } finally {
@@ -50,7 +52,6 @@ function Signup() {
     }
   };
 
-  // Verify OTP and Signup
   const handleSignup = async (e) => {
     e.preventDefault();
 
@@ -66,15 +67,16 @@ function Signup() {
       Swal.fire({
         icon: "success",
         title: "Account Created!",
-        text: "You can now login 🎉",
+        text: "You can now sign in 🎉",
         timer: 2000,
         showConfirmButton: false,
       }).then(() => navigate("/login"));
 
     } catch (error) {
-      const message = error.response?.data?.message
-        || error.response?.data
-        || "Signup failed! Try again.";
+      const message =
+        error.response?.data?.message ||
+        error.response?.data ||
+        "Signup failed! Try again.";
       Swal.fire("Error", message, "error");
     } finally {
       setLoading(false);
@@ -85,61 +87,78 @@ function Signup() {
     <div className="signup-page">
       <div className="signup-card">
 
-        <div className="signup-logo">✍️</div>
-        <h2 className="signup-title">Create Account</h2>
+        <div className="signup-logo">
+          <span className="signup-logo-star">✦</span>
+          Inkwell
+        </div>
+
+        <h2 className="signup-title">
+          {step === 1 ? "Create Account" : "Verify Email"}
+        </h2>
         <p className="signup-subtitle">
-          {step === 1 ? "Join our community today" : "Enter the OTP sent to your email"}
+          {step === 1 ? "Join the Inkwell community" : `OTP sent to ${email}`}
         </p>
 
-        {/* Step 1 — Signup Form */}
+        {/* Step dots */}
+        <div className="step-indicator">
+          <div className={`step-dot ${step === 1 ? "active" : ""}`}></div>
+          <div className={`step-dot ${step === 2 ? "active" : ""}`}></div>
+        </div>
+
+        {/* Step 1 */}
         {step === 1 && (
-          <form onSubmit={handleSendOtp}>
+          <form className="signup-form" onSubmit={handleSendOtp}>
             <div className="input-group">
               <input type="text" value={name}
-                onChange={(e) => setName(e.target.value)} required />
+                onChange={(e) => setName(e.target.value)} required placeholder=" " />
               <label>Full Name</label>
             </div>
             <div className="input-group">
               <input type="email" value={email}
-                onChange={(e) => setEmail(e.target.value)} required />
+                onChange={(e) => setEmail(e.target.value)} required placeholder=" " />
               <label>Email Address</label>
             </div>
             <div className="input-group">
               <input type="password" value={password}
-                onChange={(e) => setPassword(e.target.value)} required />
+                onChange={(e) => setPassword(e.target.value)} required placeholder=" " />
               <label>Password</label>
             </div>
             <div className="input-group">
               <input type="password" value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)} required />
+                onChange={(e) => setConfirmPassword(e.target.value)} required placeholder=" " />
               <label>Confirm Password</label>
             </div>
             <button className="signup-btn" type="submit" disabled={loading}>
-              {loading ? "Sending OTP..." : "Send OTP 📧"}
+              {loading ? "Sending OTP..." : "Send OTP →"}
             </button>
             <p className="signup-bottom">
               Already have an account?{" "}
-              <Link className="login-link" to="/login">Login</Link>
+              <Link className="login-link" to="/login">Sign in</Link>
             </p>
           </form>
         )}
 
-        {/* Step 2 — OTP Verification */}
+        {/* Step 2 */}
         {step === 2 && (
-          <form onSubmit={handleSignup}>
+          <form className="signup-form" onSubmit={handleSignup}>
             <div className="input-group">
-              <input type="text" value={otp} maxLength={6}
-                onChange={(e) => setOtp(e.target.value)} required />
-              <label>Enter OTP</label>
+              <input
+                type="text"
+                className="otp-input"
+                value={otp}
+                maxLength={6}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+                placeholder="······"
+              />
             </div>
             <button className="signup-btn" type="submit" disabled={loading}>
               {loading ? "Verifying..." : "Verify & Create Account ✅"}
             </button>
             <p className="signup-bottom">
-              Didn't receive OTP?{" "}
-              <span className="login-link" style={{ cursor: "pointer" }}
-                onClick={() => setStep(1)}>
-                Go Back
+              Didn't get the code?{" "}
+              <span className="login-link" onClick={() => setStep(1)}>
+                Go back
               </span>
             </p>
           </form>

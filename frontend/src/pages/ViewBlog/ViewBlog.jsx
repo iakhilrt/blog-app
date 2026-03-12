@@ -47,20 +47,25 @@ function ViewBlog() {
 
   return (
     <div className="viewblog-wrapper">
+
       <div className="viewblog-hero">
-        <h1>Explore Blogs</h1>
-        <p>Discover stories, ideas, and insights from our community</p>
-        <div className="search-bar">
-          <span>🔍</span>
-          <input
-            type="text"
-            placeholder="Search blogs..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(0);
-            }}
-          />
+        <div className="viewblog-hero-orb"></div>
+        <div className="viewblog-hero-inner">
+          <span className="viewblog-eyebrow">✦ Inkwell</span>
+          <h1>Explore Stories</h1>
+          <p>Discover ideas, insights, and stories from our community</p>
+          <div className="search-bar">
+            <span>🔍</span>
+            <input
+              type="text"
+              placeholder="Search blogs..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(0);
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -91,13 +96,13 @@ function ViewBlog() {
                 </p>
                 <div className="blog-card-footer">
                   <small className="blog-date">
-                    🗓️ {new Date(blog.createdAt).toLocaleDateString("en-US", {
+                    {new Date(blog.createdAt).toLocaleDateString("en-US", {
                       year: "numeric", month: "short", day: "numeric"
                     })}
                   </small>
                   <div className="blog-card-actions">
                     <Link to={`/blog/${blog.id}`} className="blog-read-btn">
-                      Read More →
+                      Read →
                     </Link>
                     {blog.authorEmail === loggedInEmail && (
                       <button

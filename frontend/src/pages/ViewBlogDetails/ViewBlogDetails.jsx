@@ -20,7 +20,7 @@ function ViewBlogDetails() {
     return (
       <div className="details-loading">
         <div className="spinner"></div>
-        <p>Loading blog...</p>
+        <p>Loading story...</p>
       </div>
     );
   }
@@ -30,7 +30,7 @@ function ViewBlogDetails() {
       <div className="details-not-found">
         <div className="not-found-icon">😔</div>
         <h2>Blog not found</h2>
-        <p>The blog you're looking for doesn't exist.</p>
+        <p>The story you're looking for doesn't exist.</p>
         <button className="back-btn" onClick={() => navigate("/viewblog")}>
           ← Back to Blogs
         </button>
@@ -43,16 +43,18 @@ function ViewBlogDetails() {
       <div className="details-card">
 
         <button className="details-back-link" onClick={() => navigate("/viewblog")}>
-          ← Back to Blogs
+          ← Back to all stories
         </button>
 
         <h1 className="details-title">{blog.title}</h1>
 
         <div className="details-meta">
           <span>✍️ {blog.authorName}</span>
-          <span>🗓️ {new Date(blog.createdAt).toLocaleDateString("en-US", {
-            year: "numeric", month: "long", day: "numeric"
-          })}</span>
+          <span>
+            {new Date(blog.createdAt).toLocaleDateString("en-US", {
+              year: "numeric", month: "long", day: "numeric"
+            })}
+          </span>
         </div>
 
         <img

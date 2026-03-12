@@ -31,33 +31,36 @@ function Contact() {
 
   return (
     <div className="contact-page">
+      <div className="contact-orb"></div>
       <div className="contact-card">
 
-        <div className="contact-icon">📬</div>
-        <h2 className="contact-title">Contact Us</h2>
-        <p className="contact-subtitle">
-          We'd love to hear from you. Send us a message!
-        </p>
+        <div className="contact-header">
+          <span className="contact-eyebrow">✦ Get in Touch</span>
+          <h2 className="contact-title">We'd love to<br />hear from you</h2>
+          <p className="contact-subtitle">
+            Send us a message and we'll get back to you within 24 hours.
+          </p>
+        </div>
 
         <form className="contact-form" onSubmit={handleSubmit}>
 
           <div className="input-group">
-            <input name="entry.279262906" type="text" required />
+            <input name="entry.279262906" type="text" required placeholder=" " />
             <label>Your Name</label>
           </div>
 
           <div className="input-group">
-            <input name="entry.2065337350" type="email" required />
-            <label>Your Email</label>
+            <input name="entry.2065337350" type="email" required placeholder=" " />
+            <label>Email Address</label>
           </div>
 
           <div className="input-group">
-            <textarea name="entry.1308446748" required></textarea>
+            <textarea name="entry.1308446748" required placeholder=" "></textarea>
             <label>Your Message</label>
           </div>
 
           <button className="contact-btn" type="submit">
-            Send Message 🚀
+            Send Message →
           </button>
 
         </form>

@@ -1,24 +1,27 @@
 .editblog-buttons {
   display: flex;
   gap: 12px;
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
 .cancel-btn {
   flex: 1;
-  padding: 12px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50px;
   background: transparent;
-  color: #555;
-  font-size: 15px;
+  color: rgba(255,255,255,0.5);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s ease;
 }
 
 .cancel-btn:hover {
-  border-color: #999;
-  color: #222;
+  border-color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.05);
 }
 
 .addblog-btn {

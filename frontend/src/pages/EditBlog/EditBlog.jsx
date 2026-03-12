@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "../AddBlog/AddBlog.css";
 import "./EditBlog.css";
 import Swal from "sweetalert2";
 import api from "../../api/axios";
@@ -17,13 +18,11 @@ function EditBlog() {
   const [uploading, setUploading] = useState(false);
   const [fetching, setFetching] = useState(true);
 
-  // ✅ Load existing blog data
   useEffect(() => {
     const fetchBlog = async () => {
       try {
         const { data } = await api.get(`/api/blogs/${id}`);
 
-        // ✅ Check if current user is the author
         const loggedInEmail = localStorage.getItem("email");
         if (data.authorEmail !== loggedInEmail) {
           Swal.fire("Unauthorized!", "You can only edit your own blogs!", "error")
@@ -47,7 +46,6 @@ function EditBlog() {
     fetchBlog();
   }, [id]);
 
-  // ✅ Upload new image to Cloudinary
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -69,20 +67,19 @@ function EditBlog() {
 
       Swal.fire({
         icon: "success",
-        title: "Image Uploaded! ✅",
+        title: "Image Uploaded ✅",
         timer: 1200,
         showConfirmButton: false,
       });
 
     } catch (error) {
       Swal.fire("Error", "Image upload failed!", "error");
-      setPreview(image); // revert to old image
+      setPreview(image);
     } finally {
       setUploading(false);
     }
   };
 
-  // ✅ Submit updated blog
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -99,11 +96,7 @@ function EditBlog() {
       }).then(() => navigate("/viewblog"));
 
     } catch (error) {
-      Swal.fire(
-        "Error",
-        error.response?.data || "Failed to update blog!",
-        "error"
-      );
+      Swal.fire("Error", error.response?.data || "Failed to update blog!", "error");
     } finally {
       setLoading(false);
     }
@@ -113,12 +106,13 @@ function EditBlog() {
 
   return (
     <div className="addblog-page">
+      <div className="addblog-orb"></div>
       <div className="addblog-card">
 
         <div className="addblog-header">
-          <div className="addblog-icon">✏️</div>
-          <h1>Edit Blog</h1>
-          <p>Update your blog post</p>
+          <span className="addblog-eyebrow">✦ Edit Your Story</span>
+          <h1>Update Blog</h1>
+          <p>Make your changes and publish</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -147,7 +141,7 @@ function EditBlog() {
                 {uploading ? (
                   <div className="image-placeholder">
                     <span>⏳</span>
-                    <p>Uploading to Cloudinary...</p>
+                    <p>Uploading...</p>
                   </div>
                 ) : preview ? (
                   <img src={preview} alt="Preview" className="image-preview" />
@@ -162,7 +156,7 @@ function EditBlog() {
           </div>
 
           <div className="addblog-field">
-            <label>Description</label>
+            <label>Content</label>
             <textarea
               placeholder="Write your blog content here..."
               value={description}
@@ -184,7 +178,7 @@ function EditBlog() {
               className="addblog-btn"
               disabled={loading || uploading}
             >
-              {uploading ? "Uploading..." : loading ? "Saving..." : "Save Changes ✅"}
+              {uploading ? "Uploading..." : loading ? "Saving..." : "Save Changes →"}
             </button>
           </div>
 
