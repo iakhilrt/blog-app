@@ -1,22 +1,25 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import "./ViewBlogDetails.css";
 import api from "../../api/axios";
 
 function ViewBlogDetails() {
+
   const { id } = useParams();
   const navigate = useNavigate();
-  const [blog, setBlog] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    api.get(`/api/blogs/${id}`)
-      .then(({ data }) => setBlog(data))
-      .catch(() => setBlog(null))
-      .finally(() => setLoading(false));
-  }, [id]);
+  const fetchBlog = async () => {
+    const { data } = await api.get(`/api/blogs/${id}`);
+    return data;
+  };
 
-  if (loading) {
+  const { data: blog, isLoading } = useQuery({
+    queryKey: ["blog", id],
+    queryFn: fetchBlog,
+    staleTime: 1000 * 60 * 5
+  });
+
+  if (isLoading) {
     return (
       <div className="details-loading">
         <div className="spinner"></div>
@@ -42,7 +45,10 @@ function ViewBlogDetails() {
     <div className="details-page">
       <div className="details-card">
 
-        <button className="details-back-link" onClick={() => navigate("/viewblog")}>
+        <button
+          className="details-back-link"
+          onClick={() => navigate("/viewblog")}
+        >
           ← Back to all stories
         </button>
 
@@ -52,7 +58,9 @@ function ViewBlogDetails() {
           <span>✍️ {blog.authorName}</span>
           <span>
             {new Date(blog.createdAt).toLocaleDateString("en-US", {
-              year: "numeric", month: "long", day: "numeric"
+              year: "numeric",
+              month: "long",
+              day: "numeric",
             })}
           </span>
         </div>
@@ -66,7 +74,10 @@ function ViewBlogDetails() {
         <p className="details-desc">{blog.description}</p>
 
         <div className="details-actions">
-          <button className="back-btn" onClick={() => navigate("/viewblog")}>
+          <button
+            className="back-btn"
+            onClick={() => navigate("/viewblog")}
+          >
             ← Back to Blogs
           </button>
         </div>

@@ -5,48 +5,84 @@ import Swal from "sweetalert2";
 import api from "../../api/axios";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 function EditBlog() {
+
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [preview, setPreview] = useState(null);
-  const [loading, setLoading] = useState(false);
+
   const [uploading, setUploading] = useState(false);
-  const [fetching, setFetching] = useState(true);
+
+  const loggedInEmail = localStorage.getItem("email");
+
+  const fetchBlog = async () => {
+    const { data } = await api.get(`/api/blogs/${id}`);
+    return data;
+  };
+
+  const { data: blog, isLoading } = useQuery({
+    queryKey: ["blog", id],
+    queryFn: fetchBlog
+  });
 
   useEffect(() => {
-    const fetchBlog = async () => {
-      try {
-        const { data } = await api.get(`/api/blogs/${id}`);
 
-        const loggedInEmail = localStorage.getItem("email");
-        if (data.authorEmail !== loggedInEmail) {
-          Swal.fire("Unauthorized!", "You can only edit your own blogs!", "error")
-            .then(() => navigate("/viewblog"));
-          return;
-        }
+    if (!blog) return;
 
-        setTitle(data.title);
-        setDescription(data.description);
-        setImage(data.image);
-        setPreview(data.image);
+    if (blog.authorEmail !== loggedInEmail) {
+      Swal.fire("Unauthorized!", "You can only edit your own blogs!", "error")
+        .then(() => navigate("/viewblog"));
+      return;
+    }
 
-      } catch (error) {
-        Swal.fire("Error", "Blog not found!", "error")
-          .then(() => navigate("/viewblog"));
-      } finally {
-        setFetching(false);
-      }
-    };
+    setTitle(blog.title);
+    setDescription(blog.description);
+    setImage(blog.image);
+    setPreview(blog.image);
 
-    fetchBlog();
-  }, [id]);
+  }, [blog]);
+
+  const updateBlogMutation = useMutation({
+
+    mutationFn: (updatedBlog) =>
+      api.put(`/api/blogs/${id}`, updatedBlog),
+
+    onSuccess: () => {
+
+      Swal.fire({
+        icon: "success",
+        title: "Blog Updated!",
+        text: "Your changes are saved 🎉",
+        timer: 1800,
+        showConfirmButton: false,
+      }).then(() => {
+
+        queryClient.invalidateQueries(["blogs"]);
+        navigate("/viewblog");
+
+      });
+
+    },
+
+    onError: (error) => {
+      Swal.fire(
+        "Error",
+        error.response?.data || "Failed to update blog!",
+        "error"
+      );
+    }
+
+  });
 
   const handleImageChange = async (e) => {
+
     const file = e.target.files[0];
     if (!file) return;
 
@@ -54,6 +90,7 @@ function EditBlog() {
     setUploading(true);
 
     try {
+
       const formData = new FormData();
       formData.append("file", file);
       formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
@@ -73,40 +110,40 @@ function EditBlog() {
       });
 
     } catch (error) {
+
       Swal.fire("Error", "Image upload failed!", "error");
       setPreview(image);
+
     } finally {
+
       setUploading(false);
+
     }
+
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
+
     e.preventDefault();
-    setLoading(true);
 
-    try {
-      await api.put(`/api/blogs/${id}`, { title, description, image });
+    updateBlogMutation.mutate({
+      title,
+      description,
+      image
+    });
 
-      Swal.fire({
-        icon: "success",
-        title: "Blog Updated!",
-        text: "Your changes are saved 🎉",
-        timer: 1800,
-        showConfirmButton: false,
-      }).then(() => navigate("/viewblog"));
-
-    } catch (error) {
-      Swal.fire("Error", error.response?.data || "Failed to update blog!", "error");
-    } finally {
-      setLoading(false);
-    }
   };
 
-  if (fetching) return <div className="loading">Loading...</div>;
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
+  }
 
   return (
+
     <div className="addblog-page">
+
       <div className="addblog-orb"></div>
+
       <div className="addblog-card">
 
         <div className="addblog-header">
@@ -129,43 +166,61 @@ function EditBlog() {
           </div>
 
           <div className="addblog-field">
+
             <label>Cover Image</label>
+
             <div className="image-upload-area">
+
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
                 id="imageInput"
               />
+
               <label htmlFor="imageInput" className="image-upload-label">
+
                 {uploading ? (
+
                   <div className="image-placeholder">
                     <span>⏳</span>
                     <p>Uploading...</p>
                   </div>
+
                 ) : preview ? (
+
                   <img src={preview} alt="Preview" className="image-preview" />
+
                 ) : (
+
                   <div className="image-placeholder">
                     <span>📷</span>
                     <p>Click to change image</p>
                   </div>
+
                 )}
+
               </label>
+
             </div>
+
           </div>
 
           <div className="addblog-field">
+
             <label>Content</label>
+
             <textarea
               placeholder="Write your blog content here..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
             />
+
           </div>
 
           <div className="editblog-buttons">
+
             <button
               type="button"
               className="cancel-btn"
@@ -173,19 +228,29 @@ function EditBlog() {
             >
               Cancel
             </button>
+
             <button
               type="submit"
               className="addblog-btn"
-              disabled={loading || uploading}
+              disabled={uploading || updateBlogMutation.isPending}
             >
-              {uploading ? "Uploading..." : loading ? "Saving..." : "Save Changes →"}
+              {uploading
+                ? "Uploading..."
+                : updateBlogMutation.isPending
+                ? "Saving..."
+                : "Save Changes →"}
             </button>
+
           </div>
 
         </form>
+
       </div>
+
     </div>
+
   );
+
 }
 
 export default EditBlog;

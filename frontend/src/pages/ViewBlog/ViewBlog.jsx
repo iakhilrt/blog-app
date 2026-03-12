@@ -1,30 +1,33 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./ViewBlog.css";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import { useQuery } from "@tanstack/react-query";
 
 const PAGE_SIZE = 6;
 
 function ViewBlog() {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const loggedInEmail = localStorage.getItem("email");
 
-  useEffect(() => {
-    setLoading(true);
-    api.get(`/api/blogs?page=${currentPage}&size=${PAGE_SIZE}`)
-      .then(({ data }) => {
-        setBlogs(data.content);
-        setTotalPages(data.totalPages);
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
-  }, [currentPage]);
+  const fetchBlogs = async () => {
+    const { data } = await api.get(`/api/blogs?page=${currentPage}&size=${PAGE_SIZE}`);
+    return data;
+  };
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["blogs", currentPage],
+    queryFn: fetchBlogs,
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5
+  });
+
+  const blogs = data?.content || [];
+  const totalPages = data?.totalPages || 0;
 
   const filtered = blogs.filter((blog) =>
     blog.title.toLowerCase().includes(search.toLowerCase())
@@ -36,7 +39,7 @@ function ViewBlog() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="viewblog-loading">
         <div className="spinner"></div>
@@ -54,6 +57,7 @@ function ViewBlog() {
           <span className="viewblog-eyebrow">✦ Inkwell</span>
           <h1>Explore Stories</h1>
           <p>Discover ideas, insights, and stories from our community</p>
+
           <div className="search-bar">
             <span>🔍</span>
             <input
@@ -70,6 +74,7 @@ function ViewBlog() {
       </div>
 
       <div className="container py-4">
+
         {filtered.length === 0 && (
           <div className="no-blogs">
             <p>😔 No blogs found</p>
@@ -77,8 +82,10 @@ function ViewBlog() {
         )}
 
         <div className="blog-grid">
+
           {filtered.map((blog) => (
             <div className="blog-card" key={blog.id}>
+
               <div className="blog-card-img-wrapper">
                 <img
                   className="blog-card-img"
@@ -86,24 +93,35 @@ function ViewBlog() {
                   alt={blog.title}
                 />
               </div>
+
               <div className="blog-card-body">
+
                 <span className="blog-author">✍️ {blog.authorName}</span>
+
                 <h4 className="blog-card-title">{blog.title}</h4>
+
                 <p className="blog-card-text">
                   {blog.description.length > 100
                     ? blog.description.substring(0, 100) + "..."
                     : blog.description}
                 </p>
+
                 <div className="blog-card-footer">
+
                   <small className="blog-date">
                     {new Date(blog.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric", month: "short", day: "numeric"
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
                     })}
                   </small>
+
                   <div className="blog-card-actions">
+
                     <Link to={`/blog/${blog.id}`} className="blog-read-btn">
                       Read →
                     </Link>
+
                     {blog.authorEmail === loggedInEmail && (
                       <button
                         className="blog-edit-btn"
@@ -112,15 +130,20 @@ function ViewBlog() {
                         ✏️ Edit
                       </button>
                     )}
+
                   </div>
                 </div>
+
               </div>
+
             </div>
           ))}
+
         </div>
 
         {totalPages > 1 && (
           <div className="pagination">
+
             <button
               className="page-btn"
               onClick={() => handlePageChange(currentPage - 1)}
@@ -146,8 +169,10 @@ function ViewBlog() {
             >
               Next →
             </button>
+
           </div>
         )}
+
       </div>
     </div>
   );
