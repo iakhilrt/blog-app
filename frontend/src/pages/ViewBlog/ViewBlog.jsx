@@ -49,6 +49,8 @@ function ViewBlog() {
     );
   }
 
+  console.log("API DATA:", data);
+
   return (
     <div className="viewblog-wrapper">
       <div className="viewblog-hero">
