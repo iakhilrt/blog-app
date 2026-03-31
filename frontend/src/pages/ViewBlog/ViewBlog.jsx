@@ -28,7 +28,7 @@ function ViewBlog() {
   });
 
   const blogs = data?.content || [];
-  const totalPages = data?.totalPages || 0;
+  const totalPages = data?.page?.totalPages || 0;
 
   const filtered = blogs.filter((blog) =>
     blog.title.toLowerCase().includes(search.toLowerCase())
