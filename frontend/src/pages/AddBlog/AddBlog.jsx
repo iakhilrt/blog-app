@@ -48,21 +48,29 @@ function AddBlog() {
     }
   });
 
+  // ✅ FIXED (FileReader instead of createObjectURL)
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const url = URL.createObjectURL(file);
-    setPreview(url);
-    setShowCrop(true);
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setPreview(reader.result); // base64
+      setShowCrop(true);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const onCropComplete = (_, croppedPixels) => {
     setCroppedAreaPixels(croppedPixels);
   };
 
+  // ✅ FIXED (crossOrigin added)
   const getCroppedImg = async (imageSrc, crop) => {
     const image = new Image();
+    image.crossOrigin = "anonymous"; // 🔥 important
     image.src = imageSrc;
 
     await new Promise((resolve) => (image.onload = resolve));
@@ -123,7 +131,7 @@ function AddBlog() {
         showConfirmButton: false,
       });
 
-    } catch {
+    } catch (err) {
       Swal.fire("Error", "Upload failed!", "error");
     } finally {
       setUploading(false);
@@ -186,7 +194,7 @@ function AddBlog() {
             </div>
           </div>
 
-          {/* POPUP MODAL */}
+          {/* MODAL */}
           {showCrop && (
             <div className="crop-modal">
               <div className="crop-modal-content">
