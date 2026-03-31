@@ -67,13 +67,14 @@ function AddBlog() {
     setCroppedAreaPixels(croppedPixels);
   };
 
-  // ✅ FIXED (crossOrigin added)
   const getCroppedImg = async (imageSrc, crop) => {
     const image = new Image();
-    image.crossOrigin = "anonymous"; // 🔥 important
+    image.crossOrigin = "anonymous";
     image.src = imageSrc;
 
-    await new Promise((resolve) => (image.onload = resolve));
+    await new Promise((resolve) => {
+      image.onload = resolve;
+    });
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -93,8 +94,18 @@ function AddBlog() {
       crop.height
     );
 
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(blob), "image/jpeg");
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error("Canvas is empty ❌"));
+            return;
+          }
+          resolve(blob);
+        },
+        "image/jpeg",
+        0.95
+      );
     });
   };
 
@@ -109,6 +120,12 @@ function AddBlog() {
     try {
       const croppedBlob = await getCroppedImg(preview, croppedAreaPixels);
 
+      console.log("✅ Blob:", croppedBlob); // DEBUG
+
+      if (!croppedBlob) {
+        throw new Error("Blob generation failed");
+      }
+
       const formData = new FormData();
       formData.append("file", croppedBlob);
       formData.append(
@@ -121,6 +138,8 @@ function AddBlog() {
         formData
       );
 
+      console.log("✅ Uploaded:", res.data); // DEBUG
+
       setImage(res.data.secure_url);
       setShowCrop(false);
 
@@ -132,7 +151,8 @@ function AddBlog() {
       });
 
     } catch (err) {
-      Swal.fire("Error", "Upload failed!", "error");
+      console.error("❌ Upload Error:", err);
+      Swal.fire("Error", err.message || "Upload failed!", "error");
     } finally {
       setUploading(false);
     }
