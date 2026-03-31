@@ -7,7 +7,6 @@ import { useQuery } from "@tanstack/react-query";
 const PAGE_SIZE = 6;
 
 function ViewBlog() {
-
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -15,7 +14,9 @@ function ViewBlog() {
   const loggedInEmail = localStorage.getItem("email");
 
   const fetchBlogs = async () => {
-    const { data } = await api.get(`/api/blogs?page=${currentPage}&size=${PAGE_SIZE}`);
+    const { data } = await api.get(
+      `/api/blogs?page=${currentPage}&size=${PAGE_SIZE}`
+    );
     return data;
   };
 
@@ -23,7 +24,7 @@ function ViewBlog() {
     queryKey: ["blogs", currentPage],
     queryFn: fetchBlogs,
     keepPreviousData: true,
-    staleTime: 1000 * 60 * 5
+    staleTime: 1000 * 60 * 5,
   });
 
   const blogs = data?.content || [];
@@ -50,7 +51,6 @@ function ViewBlog() {
 
   return (
     <div className="viewblog-wrapper">
-
       <div className="viewblog-hero">
         <div className="viewblog-hero-orb"></div>
         <div className="viewblog-hero-inner">
@@ -82,10 +82,8 @@ function ViewBlog() {
         )}
 
         <div className="blog-grid">
-
           {filtered.map((blog) => (
             <div className="blog-card" key={blog.id}>
-
               <div className="blog-card-img-wrapper">
                 <img
                   className="blog-card-img"
@@ -95,7 +93,6 @@ function ViewBlog() {
               </div>
 
               <div className="blog-card-body">
-
                 <span className="blog-author">✍️ {blog.authorName}</span>
 
                 <h4 className="blog-card-title">{blog.title}</h4>
@@ -107,7 +104,6 @@ function ViewBlog() {
                 </p>
 
                 <div className="blog-card-footer">
-
                   <small className="blog-date">
                     {new Date(blog.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",
@@ -117,7 +113,6 @@ function ViewBlog() {
                   </small>
 
                   <div className="blog-card-actions">
-
                     <Link to={`/blog/${blog.id}`} className="blog-read-btn">
                       Read →
                     </Link>
@@ -130,47 +125,40 @@ function ViewBlog() {
                         ✏️ Edit
                       </button>
                     )}
-
                   </div>
                 </div>
-
               </div>
-
             </div>
           ))}
-
         </div>
 
+        {/* ✅ IMPROVED PAGINATION */}
         {totalPages > 1 && (
-          <div className="pagination">
+          <>
+            <div className="pagination">
 
-            <button
-              className="page-btn"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 0}
-            >
-              ← Prev
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => (
               <button
-                key={i}
-                className={`page-btn ${currentPage === i ? "active" : ""}`}
-                onClick={() => handlePageChange(i)}
+                className="page-btn"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 0}
               >
-                {i + 1}
+                ← Prev
               </button>
-            ))}
 
-            <button
-              className="page-btn"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages - 1}
-            >
-              Next →
-            </button>
+              <span className="page-info">
+                Page {currentPage + 1} / {totalPages}
+              </span>
 
-          </div>
+              <button
+                className="page-btn"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages - 1}
+              >
+                Next →
+              </button>
+
+            </div>
+          </>
         )}
 
       </div>
