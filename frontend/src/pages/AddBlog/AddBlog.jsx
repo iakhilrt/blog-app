@@ -126,6 +126,7 @@ function AddBlog() {
       console.log("UPLOAD SUCCESS:", res.data);
 
       setImage(res.data.secure_url);
+      setPreview(res.data.secure_url);
       setShowCrop(false);
 
       Swal.fire({
